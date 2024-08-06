@@ -1,0 +1,8 @@
+winmenu-for-GMS1/*
+
+winmenu-for-GMS2/*
+!winmenu-for-GMS2/assetpackage.yy
+
+winmenu-for-GMS2.3+/*
+!winmenu-for-GMS2.3+/winmenu_23.yyp
+!winmenu-for-GMS2.3+/metadata.json

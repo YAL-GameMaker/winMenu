@@ -1,0 +1,778 @@
+```set template default.html```
+```set title winmenu cheat sheet```
+```set autoapi ext```
+```set navmenu 1```
+```set nolive0 1```
+```set tag:defcode gml```
+```gmlapi fnames2```
+```set intro
+This is a "cheat sheet" for the "winMenu" extension by YellowAfterlife.
+
+The extension can be found on [itch.io](https://yellowafterlife.itch.io/gamemaker-winmenu).
+```
+```exec
+function msdn(name) {
+	return render("*MSDN:* [" + name
+		+ "](!https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-"
+		+ name + ")");
+}
+null;
+```
+```setmd get
+If an error occurs, returns `undefined`${"<sup>"}[\[v\]](ver)${"</sup>"}.
+```
+```setmd ret
+%[get]
+```
+```setmd set
+Returns whether successful.
+```
+```setmd bypos
+`bypos` indicates whether `item` is a position (true) or a command (false).
+```
+```setmd flags
+Flags are explained in [winmenu_add].
+```
+#[Limitations]() {
+	##{
+	-	Menus, like most WinAPI components, don't work very well
+		in DirectX exclusive fullscreen (`window_set_fullscreen`).
+	
+		If your application needs to run in fullscreen,
+		consider borderless fullscreen (`window_set_showborder`) instead.
+	-	Per Windows rules, the game pauses while a menu is open.
+		
+		It might be possible to implement non-pausing popup menus in the future,
+		but the menu bar / system menu would still pause the game.
+	}
+}
+#[Version differences](ver) {
+	The extension works on a handful of GameMaker versions with minor differences:
+	#[GMS 2.3 and GM2022+](gms23) {
+		Menu/bitmap values are mini-structs with a handle inside.
+	}
+	#[GM:S and GMS 2.2](gms14) {
+		Menu/bitmap values are two-element arrays
+		with a unique array ref at index 0
+		and handle at index 1.
+	}
+	#[GameMaker 8.1](gm81) {
+		Menu/bitmap values are two-element ds_grids
+		with a type name in cell (0,0)
+		and handle in cell (1,0).
+		
+		For lack of `undefined`, functions return different values on error: --{
+		-	`-1` is returned instead of data structure indexes.
+		-	`""` (empty string) is returned instead of numbers.
+		-	`0` is returned instead of strings.
+		}
+		You can use `is_real` / `is_string` to check these.
+	}
+}
+#[General functions](general) {
+	#[winmenu_update()]() {
+		Should be called once per frame, dispatches events.
+	}
+	#[winmenu_init_dll()]() {
+		In GameMaker 8.1, you should call this before using the extension functions.
+		
+		Newer versions load the extension automatically.
+	}
+}
+#[Error handling](errors) {
+	When something doesn't go right, you can use these to get more information about
+	the last cause of trouble:
+	#[winmenu_get_last_error()->]() {
+		Returns the error code from the last failed call.
+		
+		*MSDN:* [GetLastError](!https://learn.microsoft.com/en-us/windows/desktop/api/errhandlingapi/nf-errhandlingapi-getlasterror)
+	}
+	#[winmenu_get_last_error_text()->]() {
+		Returns the error message from the last failed call.
+		
+		*MSDN:* [FormatMessageW](!https://learn.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-formatmessagew)
+	}
+}
+#[Managing menus]() {
+	#[winmenu_create_bar()->]() {
+		Creates and returns a new [menu bar](winmenu_bar).
+		
+		Don't forget to [destroy](winmenu_destroy) your menus if they don't stick
+		for the duration of the game!
+		
+		$[msdn](CreateMenu)
+	}
+	#[winmenu_create_popup()->]() {
+		Creates and returns a new popup menu.
+		
+		Similarly, you'll want to call [winmenu_destroy] if the menu isn't expected to
+		stick around until the game exits.
+		
+		These are used for actual popup menus and sub-menus inside a menu bar.
+		
+		Using a menu bar instead of a popup menu causes variously buggy behaviour,
+		so make sure to use the right menu type for the task.
+		
+		$[msdn](CreatePopupMenu)
+	}
+	#[winmenu_destroy(menu)->bool]() {
+		Destroys a previously created menu.
+		
+		$[msdn](DestroyMenu)
+	}
+	---
+	#[winmenu_get_handle(menu)->]() {
+		Returns a menu's raw handle (HMENU) as a number.
+	}
+	#[winmenu_from_handle(handle)->]() {
+		Creates a menu reference from a handle.
+	}
+	#[winmenu_deref(menu)->]() {
+		Destroys a menu reference without destroying the referenced menu.
+		
+		This is handy if you created a menu reference from a handle
+		(or got it from [winmenu_get_submenu]), checked what you needed,
+		and want to get rid of it without touching the menu.
+		
+		This only has to be done explicitly in GameMaker 8.1.
+	}
+	#[winmenu_handle_is_menu(handle)->]() {
+		Returns whether the given handle points to a valid menu.
+		
+		$[msdn](IsMenu)
+	}
+	#[winmenu_equals(menu1, menu2)->]() {
+		Returns whether two menu references point to the same underlying HMENU.
+	}
+}
+#[Menu properties](winmenu_properties) {
+	#[winmenu_size(menu)->]() {
+		Returns the number of items in a menu.
+		
+		%[get]
+	}
+	Default item:
+	#[winmenu_set_default_item(menu, item, bypos)->]() {
+		Changes the default item for the menu
+		(that will show in bold font, see notes in [winmenu_add]).
+		
+		%[set]
+		
+		%[bypos]
+		
+		$[msdn](SetMenuDefaultItem)
+	}
+	#[winmenu_get_default_item(menu, bypos, recursive, allow_disabled)->]() {
+		Returns the default item for the menu.
+		
+		`bypos` indicates whether you want a command (false) or a position (true) of the item.
+		
+		If `recursive` is `true` and the default item opens a sub-menu,
+		it will look for the default item in that menu (if any).
+		
+		If `disabled` is `true`, the function returns the item even if it is disabled.
+		
+		%[get]
+		
+		$[msdn](GetMenuDefaultItem)
+	}
+	Height:
+	#[winmenu_set_max_height(menu, max_height)->]() {
+		Changes the maximum height of a menu.
+		
+		Value of `0` removes the limit for height.
+		
+		%[set]
+		
+		$[msdn](SetMenuInfo) (`MIM_MAXHEIGHT`)
+	}
+	#[winmenu_get_max_height(menu)->]() {
+		Returns the maximum height of a menu.
+		
+		%[get]
+		
+		$[msdn](GetMenuInfo) (`MIM_MAXHEIGHT`)
+	}
+}
+#[Menu bar](winmenu_bar) {
+	#[winmenu_bar_set(menu)]() {
+		Changes the game window's menu bar (shown below the title bar).
+		
+		The menu should be created with [winmenu_create_bar].
+		
+		Note that this eats into the game area and you may want to account
+		for the added window height (using [winmenu_bar_get_height]).
+	}
+	#[winmenu_bar_get()->]() {
+		Returns the current bar-menu (if any).
+	}
+	#[winmenu_bar_reset()]() {
+		Removes the game window's menu bar (if any).
+	}
+	#[winmenu_bar_get_height()->]() {
+		Returns the height of the menu bar.
+		
+		%[get]
+	}
+	#[winmenu_bar_get_info(?index)->]() {
+		This function returns position and information about a menu item at `index`,
+		or the menu itself if `index` is not provided.
+		
+		The returned value depends on your GameMaker version: --{
+		-	*GMS 2.3 and GM2022+:*\
+			A struct with `x`, `y`, `width`, `height`, and `flags` variables.
+		-	*GM:S and GMS 2.2*:\
+			An array with `x`, `y`, `width`, `height`, and `flags` values written in a row.
+		-	*GM 8.1:*\
+			A `ds_map` with `x`, `y`, `width`, `height`, and `flags` key-value pairs.\
+			Don't forget to destroy it afterwards using `ds_map_destroy`!
+		}
+		
+		`flags` can contain the following bit flags: --{
+		-	`1`: menu bar has focus
+		-	`2`: menu item has focus
+		}
+		
+		%[get]
+		
+		$[msdn](GetMenuBarInfo)
+	}
+	#[winmenu_bar_redraw()->]() {
+		Redraws the menu bar.
+		
+		You should only have to call this if you have modified the menu bar
+		after assigning it to the window.
+		
+		%[set]
+	}
+	#[winmenu_bar_handler : script(command)]() {
+		If a script is assigned into this global variable,
+		it will be called with the command ID whenever the user picks something from the menu.
+		
+		Otherwise the extension will show information about the clicked items in the output
+		(using `show_debug_message`).
+		
+		#[GMS2.3 / GM2022 example] {
+			```
+			winmenu_bar_set(global.my_menu_bar);
+			winmenu_bar_handler = function(_cmd) {
+				var _cmd_text = winmenu_get_text(global.my_menu_bar, _cmd, false);
+				if (_cmd_text == undefined) _cmd_text = "???";
+				show_debug_message("Menu bar item " + string(_cmd) + " (\"" + _cmd_text + "\") was clicked.");
+			}
+			```
+		}
+		#[GM:S / GM8.1 example] {
+			```
+			winmenu_bar_set(global.my_menu_bar);
+			winmenu_bar_handler = scr_menu_bar_handler;
+			```
+			and then in `scr_menu_bar_handler` script:
+			```
+			var _cmd = argument0;
+			var _cmd_text = winmenu_get_text(m_bar, _cmd, false);
+			if (!is_string(_cmd_text)) _cmd_text = "???";
+			show_debug_message("Menu bar item " + string(_cmd) + ' ("' + _cmd_text + '") was clicked.');
+			```
+		}
+	}
+}
+#[System menu](winmenu_sysmenu) {
+	#[winmenu_sysmenu_get(revert = false)->]() {
+		Returns the game window's system menu (a popup menu).
+		
+		The system menu appears when right-clicking the title bar
+		or shift-right-clicking the game's taskbar button.
+		
+		If `revert` is `true`, this reverts the menu to its original state before returning.
+		
+		You should _not_ destroy this menu.
+	}
+	#[winmenu_sysmenu_get_info(?index)->]() {
+		Similar to [winmenu_bar_get_info], but for the system menu.
+	}
+	#[winmenu_system_handler : script(command)]() {
+		Similar to [winmenu_bar_handler], but for the system menu.
+		
+		However: this can also trigger for commands that aren't yours -
+		e.g. if the user has a third-party application that adds new items to the window menus
+		(like Dexpot or WindowFX), the event will dispatch for these as well.
+	}
+}
+#[Popup menus](winmenu_popup) {
+	#[winmenu_show_popup(menu, flags, x, y)->]() {
+		Shows a popup menu at the specified (screen-space) location.
+		
+		Returns the command for the chosen menu item,
+		or 0 if the user cancels the menu or an error occurs.
+		
+		`flags` can be one or more of the following: --{
+		-	General: --{
+			-	`wmpf_can_right_click`\
+				Items can also be chosen with the right mouse button.
+			}
+		-	Alignment: --{
+			-	`wmpf_halign_left`\
+			-	`wmpf_halign_center`\
+			-	`wmpf_halign_right`\
+			-	`wmpf_valign_top`\
+			-	`wmpf_valign_middle`\
+			-	`wmpf_valign_bottom`\
+			}
+			These are identical to how `draw_set_halign`/`draw_set_valign` work, but for menus.
+		-	Animation: --{
+			-	`wmpf_anim_to_right`\
+			-	`wmpf_anim_to_left`\
+			-	`wmpf_anim_to_bottom`\
+			-	`wmpf_anim_to_top`\
+			-	`wmpf_anim_none`\
+			}
+			These control the direction in which the menu "rolls out"
+			if animation is enabled in system settings.
+		}
+		
+		$[msdn](TrackPopupMenuEx)
+	}
+	#[winmenu_show_popup_outside(menu, flags, x, y, exclude_x, exclude_y, exclude_width, exclude_height)->]() {
+		Like above, but avoids overlapping the specified rectangle
+		(e.g. the subject of a context menu).
+	}
+}
+#[Managing items](winmenu_item) {
+	Adding:
+	#[winmenu_add(menu, command, text, flags = 0)->]() {
+		Adds a new item to a menu.
+		
+		%[set]
+		
+		`command` is a unique (across the current menu popup/bar) index
+		that is then used for telling what item was interacted with,
+		or accessing/modifying items.
+		
+		`text` is an item label.
+		
+		`flags` can be one or a sum of the following: --{
+		-	`wmf_disabled`\
+			The item is disabled and grayed out.
+		-	`wmf_enabled`\
+			This flag is here for completeness, but you should know that you don't have to pass
+			it in - an item is enabled if it is not disabled.
+		-	`wmf_checked`\
+			The item is "checked" (a checkmark appears next to it).
+		-	`wmf_radiocheck`\
+			The checkmark appears as a radiobutton circle instead.
+		-	`wmf_hilite`\
+			The item is highlighted when the menu opens.\
+			The flag clears after moving the mouse over the item or otherwise selecting it.
+		-	`wmf_separator`\
+			The item is a separator line
+		-	`wmf_default`\
+			The item is the "default"/suggested action for the menu and highlighted in bold.\
+			For example, "Open" action in Explorer file context menus is the default one.\
+			A menu can only have one "default" item at a time.
+		-	`wmf_right_justify`\
+			Aligns this and the subsequent menu bar items to the right side.\
+			If you've seen software have a "?" button on the right edge, that's how it works.
+		-	`wmf_right_order`\
+			Opens sub-menus to the left rather than to the right of this item.\
+			This is used for right-to-left languages, such as Arabic and Hebrew.
+		-	`wmf_break`\
+			Moves this and subsequent menu items to a new column (popup menus) or row (menu bars).
+		-	`wmf_bar_break`\
+			Same as above, but also draws a separator between them.
+		}
+		
+		$[msdn](InsertMenuItemW)
+	}
+	#[winmenu_add_submenu(menu, command, submenu, text, flags = 0)->]() {
+		Adds a menu with a sub-menu.
+		
+		The sub-menu should be a menu created using [winmenu_create_popup].
+		
+		%[set]
+		
+		%[flags]
+	}
+	#[winmenu_add_separator(menu, command, flags = 0)->]() {
+		A convenience function for inserting a separator (with `wmf_separator` flag).
+		
+		%[set]
+		
+		%[flags]
+	}
+	Inserting:
+	#[winmenu_insert(menu, item, bypos, command, text, flags = 0)->]() {
+		Inserts an item before another item.
+		
+		%[set]
+		
+		%[bypos]
+		
+		%[flags]
+	}
+	#[winmenu_insert_submenu(menu, item, bypos, command, submenu, text, flags = 0)->]() {
+		Like [winmenu_add_submenu], but for insertion.
+	}
+	#[winmenu_insert_separator(menu, item, bypos, command, flags = 0)->]() {
+		Like [winmenu_add_separator], but for insertion.
+	}
+	Removing:
+	#[winmenu_delete(menu, item, bypos)->]() {
+		Removes a specified item from a menu.
+		
+		%[set]
+		
+		If the item contains a sub-menu, the sub-menu remains untouched.
+		
+		%[bypos]
+	}
+	#[winmenu_delete_rec(menu, item, bypos)->]() {
+		Removes a specified item from a menu.
+		
+		%[set]
+		
+		If the item contains a sub-menu, the sub-menu is destroyed.
+		
+		%[bypos]
+	}
+}
+#[Item properties](winmenu_item_props) {
+	Command:
+	#[winmenu_get_command(menu, index)->]() {
+		Returns the command of an item at the specified index.
+		
+		%[get]
+	}
+	#[winmenu_set_command(menu, item, bypos, new_command)->]() {
+		Changes the command of an item.
+		
+		%[set]
+		
+		%[bypos]
+	}
+	Text:
+	#[winmenu_get_text(menu, item, bypos)->]() {
+		Returns the current label of an item.
+		
+		%[get]
+		
+		%[bypos]
+	}
+	#[winmenu_set_text(menu, item, bypos, new_label)->]() {
+		Updates the label of an item.
+		
+		%[set]
+		
+		%[bypos]
+	}
+	Sub-menus:
+	#[winmenu_has_submenu(menu, item, bypos)->]() {
+		Returns whether an item has a sub-menu attached.
+		
+		%[get]
+		
+		%[bypos]
+	}
+	#[winmenu_get_submenu(menu, item, bypos)->]() {
+		Returns an item's sub-menu.
+		
+		In GM8.1, you should free the returned menu reference using [winmenu_deref]
+		once you're done working with it.
+		
+		%[get]
+		
+		%[bypos]
+	}
+	#[winmenu_set_submenu(menu, item, bypos, new_submenu)->]() {
+		Updates an item's sub-menu.
+		
+		%[set]
+		
+		%[bypos]
+	}
+	Flags:
+	#[winmenu_get_flags(menu, item, bypos)->]() {
+		Returns flags of an item.
+		
+		This function is effectively a combination of most other functions in this section
+		for people who know what bit math is.
+		
+		%[get]
+		
+		%[bypos]
+		
+		%[flags]
+		
+		$[msdn](GetMenuItemInfoW)
+	}
+	#[winmenu_set_flags(menu, item, bypos, new_flags)->]() {
+		Updates flags of an item.
+		
+		%[set]
+		
+		%[bypos]
+		
+		%[flags]
+		
+		$[msdn](SetMenuItemInfoW)
+	}
+	Enable/disable:
+	#[winmenu_get_enabled(menu, item, bypos)->]() {
+		Returns whether an item is enabled.
+		
+		%[get]
+		
+		%[bypos]
+	}
+	#[winmenu_set_enabled(menu, item, bypos, enabled)->]() {
+		Changes whether an item is enabled.
+		
+		%[set]
+		
+		%[bypos]
+	}
+	Highlight:
+	#[winmenu_get_hilite(menu, item, bypos)->]() {
+		Returns whether an item will be highlighted when the menu opens
+		(see [winmenu_add] for explanation).
+		
+		%[get]
+		
+		%[bypos]
+	}
+	#[winmenu_set_hilite(menu, item, bypos, new_)->]() {
+		Changes whether an item will be highlighted when the menu opens
+		
+		%[set]
+		
+		%[bypos]
+		
+		$[msdn](HiliteMenuItem)
+	}
+	Checkmark:
+	#[winmenu_get_checked(menu, item, bypos)->]() {
+		Returns whether the item is currently checked
+		(for both checkmarks and radiobuttons).
+		
+		%[get]
+		
+		%[bypos]
+	}
+	#[winmenu_set_checked(menu, item, bypos, checked)->]() {
+		Changes whether the item is currently checked.
+		
+		%[set]
+		
+		%[bypos]
+	}
+	Radio buttons:
+	#[winmenu_get_radio(menu, item, bypos)->]() {
+		Returns whether an item is shown as a radio button when checked.
+		
+		%[get]
+		
+		%[bypos]
+	}
+	#[winmenu_set_radio(menu, item, bypos, show_as_radio)->]() {
+		Changes whether an item is shown as a radio button when checked.
+		
+		%[set]
+		
+		%[bypos]
+	}
+	#[winmenu_set_radio_group(menu, first, last, selection, bypos)->]() {
+		This function marks a range of items (inclusive) as radio buttons
+		and un-checks all of them except for the item indicated with `selection`.
+		
+		%[set]
+		
+		%[bypos]
+		
+		$[msdn](CheckMenuRadioItem)
+	}
+}
+#[Item utilities](winmenu_item_util) {
+	#[winmenu_get_item_rect(use_hwnd, menu, index)->]() {
+		Returns a rectangle that the item occupies on screen.
+		
+		Returned value is a struct in GMS2.3+,
+		an array in GM:S and GMS2.2,
+		and a ds_map in GM8.1.
+		
+		$[msdn](GetMenuItemRect)
+	}
+	#[winmenu_item_from_point(use_hwnd, menu, x, y)->]() {
+		Returns what menu item is under (screen-space) coordinates.
+		
+		$[msdn](MenuItemFromPoint)
+	}
+}
+#[Bitmaps/icons](winmenu_bitmap) {
+	Menu items (except for items in the menu bar) can have icons.
+	
+	I'm calling these "bitmaps" because an "icon" in WinAPI terms
+	is a different thing (that can have multiple sizes and other metadata).
+	
+	*Important:* Windows expects menu bitmaps to have pre-multiplied alpha.
+	
+	#[winmenu_bitmap_add(path)->]() {
+		Loads a bitmap from the specified file.
+		
+		%[ret]
+		
+		Notes: --{
+		-	The file must be a 32-bit BMP image
+		-	A full path might be necessary if you aren't loading from the working directory
+		}
+	}
+	#[winmenu_bitmap_create_from_surface(surface)->]() {
+		Creates a bitmap from a surface.
+		
+		%[ret]
+	}
+	#[winmenu_bitmap_create_from_sprite(sprite, subimg)->]() {
+		Creates a bitmap from a sprite.
+		
+		%[ret]
+	}
+	#[winmenu_bitmap_create_from_buffer(buffer, width, height, is_rgba)->]() {
+		Creates a bitmap from RGBA/BGRA pixel data in a buffer.
+		
+		%[ret]
+		
+		This function doesn't exist in GM8.1 version (for lack of buffers).
+	}
+	---
+	#[winmenu_bitmap_destroy(bitmap)]() {
+		Destroys a previously created bitmap.
+	}
+	#[winmenu_bitmap_deref(bitmap)]() {
+		Removes a bitmap reference without destroying the underlying bitmap.
+		
+		This only has to be done explicitly in GM8.1.
+	}
+	---
+	#[winmenu_bitmap_equals(bitmap1, bitmap2)->]() {
+		Returns whether two bitmaps reference the same underlying WinAPI bitmap.
+	}
+}
+#[Item bitmaps](winmenu_bitmap_icon) {
+	These appear next to the menu item label (if any).
+	
+	#[winmenu_set_bitmap(menu, item, bypos, bitmap)->]() {
+		Changes the bitmap of a menu item.
+		
+		`bitmap` is a [bitmap](winmenu_bitmap), surely enough.
+		
+		%[bypos]
+		
+		%[set]
+	}
+	#[winmenu_set_bitmap_sys(menu, item, bypos, index)->]() {
+		Changes the bitmap of a menu item to one of the special system bitmaps.
+		
+		`index` can be one of the following: --{
+		-	`wmbm_mbar_close`
+		-	`wmbm_mbar_close_d`
+		-	`wmbm_mbar_minimize`
+		-	`wmbm_mbar_minimize_d`
+		-	`wmbm_mbar_restore`
+		-	`wmbm_popup_close`
+		-	`wmbm_popup_maximize`
+		-	`wmbm_popup_mimize`
+		-	`wmbm_popup_restore`
+		}
+		These are the bitmap-icons that you see in system menus.\
+		`_d` suffix means "disabled".
+		
+		%[bypos]
+		
+		%[set]
+		
+		$[msdn](SetMenuItemInfoW) (`MIIM_BITMAP`)
+	}
+	#[winmenu_reset_bitmap(menu, item, bypos)->]() {
+		Clears the bitmap from a menu item.
+		
+		This does not affect the bitmap in question.
+		
+		%[bypos]
+		
+		%[set]
+	}
+	#[winmenu_has_bitmap(menu, item, bypos)->]() {
+		Returns whether an item has a bitmap assigned.
+		
+		%[bypos]
+		
+		%[get]
+	}
+	#[winmenu_get_bitmap(menu, item, bypos)->]() {
+		Returns the currently used bitmap of an item.
+		
+		%[bypos]
+		
+		%[get]
+	}
+}
+#[Item checkmarks](winmenu_checkmark) {
+	Checkmark bitmaps appear instead of the regular checkmarks.
+	
+	If an item has both a bitmap and a checkmark, these will appear in separate columns.
+	
+	Much like regular checkmarks, checkmark bitmaps will not appear in
+	[menu bars](winmenu_bar).
+	
+	#[winmenu_set_checkmark_bitmaps(menu, item, bypos, unchecked, checked)->]() {
+		Changes the checkmark bitmaps of a menu item.
+		
+		`unchecked` and `checked` are [bitmaps](winmenu_bitmap).
+		
+		%[bypos]
+		
+		%[set]
+		
+		$[msdn](SetMenuItemBitmaps)
+	}
+	#[winmenu_reset_checkmark_bitmaps(menu, item, bypos)->]() {
+		Clears checkmark bitmaps from a menu item.
+		
+		This does not affect the bitmaps in question.
+		
+		%[bypos]
+		
+		%[set]
+	}
+	#[winmenu_has_checkmark_bitmap(menu, item, bypos, checked)->]() {
+		Returns whether an item has a checkmark bitmap assigned.
+		
+		Checks for the "checked" bitmap if `checked` if true and "unchecked" otherwise.
+		
+		%[bypos]
+		
+		%[get]
+	}
+	#[winmenu_get_checkmark_bitmap(menu, item, bypos, checked)->]() {
+		Retrieves the current checkmark bitmap for a menu item.
+		
+		Returns the "checked" bitmap if `checked` if true and "unchecked" otherwise.
+		
+		%[bypos]
+		
+		%[get]
+		
+		$[msdn](GetMenuItemInfoW) (`MIIM_CHECKMARKS`)
+	}
+	---
+	#[winmenu_get_checkmark_width()->]() {
+		Returns the width of the default checkmark icon, in pixels.
+		
+		It's a good idea to keep your icon sizes close to the system icon size,
+		but Windows does not currently enforce this.
+		
+		$[msdn](GetSystemMetrics) (`SM_CXMENUCHECK`, `SM_CYMENUCHECK`)
+	}
+	#[winmenu_get_checkmark_height()->]() {
+		Same as above, but for height.
+	}
+}
