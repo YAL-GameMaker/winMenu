@@ -263,6 +263,18 @@
             1,
             2,
           ],"resourceVersion":"1.0","name":"winmenu_show_popup_outside_raw","tags":[],"resourceType":"GMExtensionFunction",},
+        {"externalName":"winmenu_cleanup_for_raw_raw","kind":11,"help":"","hidden":true,"returnType":2,"argCount":2,"args":[
+            1,
+            2,
+          ],"resourceVersion":"1.0","name":"winmenu_cleanup_for_raw_raw","tags":[],"resourceType":"GMExtensionFunction",},
+        {"externalName":"winmenu_queue_hwnd_raw","kind":11,"help":"","hidden":true,"returnType":2,"argCount":2,"args":[
+            1,
+            2,
+          ],"resourceVersion":"1.0","name":"winmenu_queue_hwnd_raw","tags":[],"resourceType":"GMExtensionFunction",},
+        {"externalName":"winmenu_bar_get_raw_raw","kind":11,"help":"","hidden":true,"returnType":2,"argCount":2,"args":[
+            1,
+            2,
+          ],"resourceVersion":"1.0","name":"winmenu_bar_get_raw_raw","tags":[],"resourceType":"GMExtensionFunction",},
         {"externalName":"winmenu_bar_set_raw_raw","kind":11,"help":"","hidden":true,"returnType":2,"argCount":2,"args":[
             1,
             2,
@@ -291,6 +303,10 @@
             1,
             2,
           ],"resourceVersion":"1.0","name":"winmenu_sysmenu_get_info_raw","tags":[],"resourceType":"GMExtensionFunction",},
+        {"externalName":"winmenu_preinit_raw","kind":11,"help":"","hidden":true,"returnType":2,"argCount":2,"args":[
+            1,
+            2,
+          ],"resourceVersion":"1.0","name":"winmenu_preinit_raw","tags":[],"resourceType":"GMExtensionFunction",},
         {"externalName":"winmenu_get_last_error","kind":1,"help":"winmenu_get_last_error()","hidden":false,"returnType":2,"argCount":0,"args":[],"resourceVersion":"1.0","name":"winmenu_get_last_error","tags":[],"resourceType":"GMExtensionFunction",},
         {"externalName":"winmenu_get_last_error_text","kind":1,"help":"winmenu_get_last_error_text()","hidden":false,"returnType":1,"argCount":0,"args":[],"resourceVersion":"1.0","name":"winmenu_get_last_error_text","tags":[],"resourceType":"GMExtensionFunction",},
         {"externalName":"winmenu_queue_size","kind":11,"help":"","hidden":true,"returnType":2,"argCount":1,"args":[
@@ -395,6 +411,9 @@
         {"name":"winmenu_set_max_height_raw","path":"extensions/winmenu/winmenu.yy",},
         {"name":"winmenu_show_popup_raw","path":"extensions/winmenu/winmenu.yy",},
         {"name":"winmenu_show_popup_outside_raw","path":"extensions/winmenu/winmenu.yy",},
+        {"name":"winmenu_cleanup_for_raw_raw","path":"extensions/winmenu/winmenu.yy",},
+        {"name":"winmenu_queue_hwnd_raw","path":"extensions/winmenu/winmenu.yy",},
+        {"name":"winmenu_bar_get_raw_raw","path":"extensions/winmenu/winmenu.yy",},
         {"name":"winmenu_bar_set_raw_raw","path":"extensions/winmenu/winmenu.yy",},
         {"name":"winmenu_bar_reset_raw_raw","path":"extensions/winmenu/winmenu.yy",},
         {"name":"winmenu_bar_redraw_raw","path":"extensions/winmenu/winmenu.yy",},
@@ -402,6 +421,7 @@
         {"name":"winmenu_bar_get_height_raw","path":"extensions/winmenu/winmenu.yy",},
         {"name":"winmenu_sysmenu_get_raw_raw","path":"extensions/winmenu/winmenu.yy",},
         {"name":"winmenu_sysmenu_get_info_raw","path":"extensions/winmenu/winmenu.yy",},
+        {"name":"winmenu_preinit_raw","path":"extensions/winmenu/winmenu.yy",},
         {"name":"winmenu_get_last_error","path":"extensions/winmenu/winmenu.yy",},
         {"name":"winmenu_get_last_error_text","path":"extensions/winmenu/winmenu.yy",},
         {"name":"winmenu_queue_size","path":"extensions/winmenu/winmenu.yy",},
@@ -409,6 +429,13 @@
       ],"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMExtensionFile",},
     {"filename":"winmenu.gml","origname":"extensions\\gml.gml","init":"winmenu_preinit","final":"","kind":2,"uncompress":false,"functions":[
         {"externalName":"winmenu_preinit","kind":11,"help":"","hidden":true,"returnType":2,"argCount":0,"args":[],"resourceVersion":"1.0","name":"winmenu_preinit","tags":[],"resourceType":"GMExtensionFunction",},
+        {"externalName":"winmenu_cleanup_for","kind":2,"help":"winmenu_cleanup_for(hwnd)","hidden":false,"returnType":2,"argCount":1,"args":[
+            2,
+          ],"resourceVersion":"1.0","name":"winmenu_cleanup_for","tags":[],"resourceType":"GMExtensionFunction",},
+        {"externalName":"winmenu_set_target","kind":2,"help":"winmenu_set_target(new_window_handle)","hidden":false,"returnType":2,"argCount":1,"args":[
+            2,
+          ],"resourceVersion":"1.0","name":"winmenu_set_target","tags":[],"resourceType":"GMExtensionFunction",},
+        {"externalName":"winmenu_reset_target","kind":2,"help":"winmenu_reset_target()","hidden":false,"returnType":2,"argCount":0,"args":[],"resourceVersion":"1.0","name":"winmenu_reset_target","tags":[],"resourceType":"GMExtensionFunction",},
         {"externalName":"winmenu_update","kind":2,"help":"winmenu_update()","hidden":false,"returnType":2,"argCount":0,"args":[],"resourceVersion":"1.0","name":"winmenu_update","tags":[],"resourceType":"GMExtensionFunction",},
         {"externalName":"winmenu_prepare_buffer","kind":11,"help":"","hidden":true,"returnType":2,"argCount":1,"args":[
             2,
@@ -434,6 +461,9 @@
         {"value":"global.g_winmenu_system_handler","hidden":false,"resourceVersion":"1.0","name":"winmenu_system_handler","tags":[],"resourceType":"GMExtensionConstant",},
       ],"ProxyFiles":[],"copyToTargets":9223372036854775807,"order":[
         {"name":"winmenu_preinit","path":"extensions/winmenu/winmenu.yy",},
+        {"name":"winmenu_cleanup_for","path":"extensions/winmenu/winmenu.yy",},
+        {"name":"winmenu_set_target","path":"extensions/winmenu/winmenu.yy",},
+        {"name":"winmenu_reset_target","path":"extensions/winmenu/winmenu.yy",},
         {"name":"winmenu_update","path":"extensions/winmenu/winmenu.yy",},
         {"name":"winmenu_prepare_buffer","path":"extensions/winmenu/winmenu.yy",},
         {"name":"winmenu_prepare_buffer_alt","path":"extensions/winmenu/winmenu.yy",},
@@ -629,10 +659,10 @@
           ],"resourceVersion":"1.0","name":"winmenu_item_from_point","tags":[],"resourceType":"GMExtensionFunction",},
         {"externalName":"winmenu_add","kind":2,"help":"winmenu_add(menu, command:int, text:string, flags:int = 0)->bool","hidden":false,"returnType":2,"argCount":-1,"args":[],"resourceVersion":"1.0","name":"winmenu_add","tags":[],"resourceType":"GMExtensionFunction",},
         {"externalName":"winmenu_add_submenu","kind":2,"help":"winmenu_add_submenu(menu, command:int, submenu, text:string, flags:int = 0)->bool","hidden":false,"returnType":2,"argCount":-1,"args":[],"resourceVersion":"1.0","name":"winmenu_add_submenu","tags":[],"resourceType":"GMExtensionFunction",},
-        {"externalName":"winmenu_add_separator","kind":2,"help":"winmenu_add_separator(menu, command:int, flags:int = 0)->bool","hidden":false,"returnType":2,"argCount":-1,"args":[],"resourceVersion":"1.0","name":"winmenu_add_separator","tags":[],"resourceType":"GMExtensionFunction",},
+        {"externalName":"winmenu_add_separator","kind":2,"help":"winmenu_add_separator(menu, command:int = 0, flags:int = 0)->bool","hidden":false,"returnType":2,"argCount":-1,"args":[],"resourceVersion":"1.0","name":"winmenu_add_separator","tags":[],"resourceType":"GMExtensionFunction",},
         {"externalName":"winmenu_insert","kind":2,"help":"winmenu_insert(menu, item:int, bypos:bool, command:int, text:string, flags:int = 0)->bool","hidden":false,"returnType":2,"argCount":-1,"args":[],"resourceVersion":"1.0","name":"winmenu_insert","tags":[],"resourceType":"GMExtensionFunction",},
         {"externalName":"winmenu_insert_submenu","kind":2,"help":"winmenu_insert_submenu(menu, item:int, bypos:bool, command:int, submenu, text:string, flags:int = 0)->bool","hidden":false,"returnType":2,"argCount":-1,"args":[],"resourceVersion":"1.0","name":"winmenu_insert_submenu","tags":[],"resourceType":"GMExtensionFunction",},
-        {"externalName":"winmenu_insert_separator","kind":2,"help":"winmenu_insert_separator(menu, item:int, bypos:bool, command:int, flags:int = 0)->bool","hidden":false,"returnType":2,"argCount":-1,"args":[],"resourceVersion":"1.0","name":"winmenu_insert_separator","tags":[],"resourceType":"GMExtensionFunction",},
+        {"externalName":"winmenu_insert_separator","kind":2,"help":"winmenu_insert_separator(menu, item:int, bypos:bool, command:int = 0, flags:int = 0)->bool","hidden":false,"returnType":2,"argCount":-1,"args":[],"resourceVersion":"1.0","name":"winmenu_insert_separator","tags":[],"resourceType":"GMExtensionFunction",},
         {"externalName":"winmenu_delete","kind":2,"help":"winmenu_delete(menu, item:int, bypos:bool)->bool","hidden":false,"returnType":2,"argCount":3,"args":[
             2,
             2,
@@ -685,22 +715,13 @@
             2,
             2,
           ],"resourceVersion":"1.0","name":"winmenu_set_max_height","tags":[],"resourceType":"GMExtensionFunction",},
-        {"externalName":"winmenu_show_popup","kind":2,"help":"winmenu_show_popup(menu, flags:int, x:int, y:int)->int","hidden":false,"returnType":2,"argCount":4,"args":[
+        {"externalName":"winmenu_show_popup","kind":2,"help":"winmenu_show_popup(menu, flags:int = 0, ?x:int?, ?y:int?)->int","hidden":false,"returnType":2,"argCount":-1,"args":[],"resourceVersion":"1.0","name":"winmenu_show_popup","tags":[],"resourceType":"GMExtensionFunction",},
+        {"externalName":"winmenu_show_popup_outside","kind":2,"help":"winmenu_show_popup_outside(menu, exclude_x:int, exclude_y:int, exclude_width:int, exclude_height:int, flags:int = 0, ?x:int?, ?y:int?)->int","hidden":false,"returnType":2,"argCount":-1,"args":[],"resourceVersion":"1.0","name":"winmenu_show_popup_outside","tags":[],"resourceType":"GMExtensionFunction",},
+        {"externalName":"winmenu_cleanup_for_raw","kind":11,"help":"","hidden":true,"returnType":2,"argCount":1,"args":[
             2,
-            2,
-            2,
-            2,
-          ],"resourceVersion":"1.0","name":"winmenu_show_popup","tags":[],"resourceType":"GMExtensionFunction",},
-        {"externalName":"winmenu_show_popup_outside","kind":2,"help":"winmenu_show_popup_outside(menu, flags:int, x:int, y:int, exclude_x:int, exclude_y:int, exclude_width:int, exclude_height:int)->int","hidden":false,"returnType":2,"argCount":8,"args":[
-            2,
-            2,
-            2,
-            2,
-            2,
-            2,
-            2,
-            2,
-          ],"resourceVersion":"1.0","name":"winmenu_show_popup_outside","tags":[],"resourceType":"GMExtensionFunction",},
+          ],"resourceVersion":"1.0","name":"winmenu_cleanup_for_raw","tags":[],"resourceType":"GMExtensionFunction",},
+        {"externalName":"winmenu_queue_hwnd","kind":11,"help":"","hidden":true,"returnType":2,"argCount":0,"args":[],"resourceVersion":"1.0","name":"winmenu_queue_hwnd","tags":[],"resourceType":"GMExtensionFunction",},
+        {"externalName":"winmenu_bar_get_raw","kind":11,"help":"","hidden":true,"returnType":2,"argCount":0,"args":[],"resourceVersion":"1.0","name":"winmenu_bar_get_raw","tags":[],"resourceType":"GMExtensionFunction",},
         {"externalName":"winmenu_bar_set_raw","kind":11,"help":"","hidden":true,"returnType":2,"argCount":1,"args":[
             2,
           ],"resourceVersion":"1.0","name":"winmenu_bar_set_raw","tags":[],"resourceType":"GMExtensionFunction",},
@@ -772,6 +793,9 @@
         {"name":"winmenu_set_max_height","path":"extensions/winmenu/winmenu.yy",},
         {"name":"winmenu_show_popup","path":"extensions/winmenu/winmenu.yy",},
         {"name":"winmenu_show_popup_outside","path":"extensions/winmenu/winmenu.yy",},
+        {"name":"winmenu_cleanup_for_raw","path":"extensions/winmenu/winmenu.yy",},
+        {"name":"winmenu_queue_hwnd","path":"extensions/winmenu/winmenu.yy",},
+        {"name":"winmenu_bar_get_raw","path":"extensions/winmenu/winmenu.yy",},
         {"name":"winmenu_bar_set_raw","path":"extensions/winmenu/winmenu.yy",},
         {"name":"winmenu_bar_reset_raw","path":"extensions/winmenu/winmenu.yy",},
         {"name":"winmenu_bar_redraw","path":"extensions/winmenu/winmenu.yy",},

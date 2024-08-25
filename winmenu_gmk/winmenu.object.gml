@@ -64,11 +64,11 @@ var gun_ld_bmp = winmenu_bitmap_create_from_sprite(gun_ld, 0);
 winmenu_set_bitmap(m_dont, MenuCMD_Gun, false, gun_bmp);
 winmenu_set_checkmark_bitmaps(m_dont, MenuCMD_Gun, false, gun_ld_bmp, gun_l_bmp);
 
-winmenu_add_menu(m_bar, MenuCMD_File, m_file, "File");
-winmenu_add_menu(m_bar, MenuCMD_Numbers, m_number, "Numbers");
-winmenu_add_menu(m_bar, MenuCMD_Checkboxes, m_check, "Checkboxes");
+winmenu_add_submenu(m_bar, MenuCMD_File, m_file, "File");
+winmenu_add_submenu(m_bar, MenuCMD_Numbers, m_number, "Numbers");
+winmenu_add_submenu(m_bar, MenuCMD_Checkboxes, m_check, "Checkboxes");
 winmenu_set_checked(m_bar, MenuCMD_Checkboxes, false, true);
-winmenu_add_menu(m_bar, MenuCMD_Dont, m_dont, "Don't");
+winmenu_add_submenu(m_bar, MenuCMD_Dont, m_dont, "Don't");
 
 winmenu_add(m_bar, MenuCMD_Help, "?", wmf_right_justify);
 
@@ -86,7 +86,7 @@ enum_end();
 
 var m_sys = winmenu_sysmenu_get();
 winmenu_add(m_sys, SysCMD_InGameMaker, "in GameMaker!");
-winmenu_insert_menu(m_sys, SysCMD_InGameMaker, false, SysCMD_CustomMenus, m_check, "Custom menus");
+winmenu_insert_submenu(m_sys, SysCMD_InGameMaker, false, SysCMD_CustomMenus, m_check, "Custom menus");
 
 #event alarm0
 background_color = background_color_start;

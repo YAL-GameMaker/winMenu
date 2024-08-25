@@ -36,6 +36,9 @@
     <ClInclude Include="StringConv.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="winapi_hook.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -69,6 +72,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="winmenu_bitmap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="winapi_hook.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

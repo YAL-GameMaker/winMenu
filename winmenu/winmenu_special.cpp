@@ -1,42 +1,79 @@
 #include "stdafx.h"
 #include "winmenu.h"
 #include <queue>
+#include <unordered_map>
 
-std::queue<uint32_t> wndmenu_queue{};
-std::queue<uint32_t> wndmenu_sysqueue{};
+struct winmenu_queue_item {
+    uint32_t command;
+    HWND hwnd;
+};
+std::queue<winmenu_queue_item> winmenu_bar_queue{};
+std::queue<winmenu_queue_item> winmenu_sys_queue{};
+std::unordered_map<HWND, WNDPROC> winmenu_baseprocs{};
 
-WNDPROC wndproc_base;
 LRESULT wndproc_hook(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     if (msg == WM_COMMAND) {
         switch (HIWORD(wParam)) {
             case 0: case 1: // menu, accelerator
-                wndmenu_queue.push(LOWORD(wParam));
+                winmenu_queue_item item{};
+                item.command = LOWORD(wParam);
+                item.hwnd = hwnd;
+                winmenu_bar_queue.push(item);
                 break;
         }
     } else if (msg == WM_SYSCOMMAND) {
         auto cmd = (uint32_t)wParam;
-        if (cmd < 0xF000) wndmenu_sysqueue.push(cmd);
+        if (cmd < 0xF000) {
+            winmenu_queue_item item{};
+            item.command = cmd;
+            item.hwnd = hwnd;
+            winmenu_sys_queue.push(item);
+        }
     }
-    return CallWindowProc(wndproc_base, hwnd, msg, wParam, lParam);
+    auto pair = winmenu_baseprocs.find(hwnd);
+    if (pair != winmenu_baseprocs.end()) {
+        return CallWindowProc(pair->second, hwnd, msg, wParam, lParam);
+    } else return 0;
 }
 void wndproc_ensure(HWND hwnd) {
-    if (wndproc_base != nullptr) return;
-    wndproc_base = (WNDPROC)SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)wndproc_hook);
+    if (winmenu_baseprocs.find(hwnd) != winmenu_baseprocs.end()) return;
+    winmenu_baseprocs[hwnd] = (WNDPROC)SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)wndproc_hook);
 }
 
+/// ~
+dllg void winmenu_cleanup_for_raw(uintptr_t _hwnd) {
+    auto hwnd = (HWND)_hwnd;
+    auto pair = winmenu_baseprocs.find(hwnd);
+    if (pair == winmenu_baseprocs.end()) return;
+    // revert wndproc if it wasn't re-hooked:
+    if (GetWindowLongPtr(hwnd, GWLP_WNDPROC) == (LONG_PTR)wndproc_hook) {
+        SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)pair->second);
+    }
+    winmenu_baseprocs.erase(hwnd);
+}
+
+static winmenu_queue_item winmenu_queue_latest{};
 dllx double winmenu_queue_size(double _kind) {
     if ((int)_kind > 0) {
-        return (double)wndmenu_sysqueue.size();
-    } else return (double)wndmenu_queue.size();
+        return (double)winmenu_sys_queue.size();
+    } else return (double)winmenu_bar_queue.size();
 }
 dllx double winmenu_queue_pop(double _kind) {
-    auto& q = (int)_kind > 0 ? wndmenu_sysqueue : wndmenu_queue;
+    auto& q = (int)_kind > 0 ? winmenu_sys_queue : winmenu_bar_queue;
     if (q.empty()) return -1;
-    int result = q.front();
+    winmenu_queue_latest = q.front();
     q.pop();
-    return result;
+    return winmenu_queue_latest.command;
+}
+/// ~
+dllg uintptr_t winmenu_queue_hwnd() {
+    return (uintptr_t)winmenu_queue_latest.hwnd;
 }
 
+/// ~
+dllg wm_menu winmenu_bar_get_raw(GAME_HWND hwnd) {
+    return GetMenu(hwnd);
+}
 /// ~
 dllg bool winmenu_bar_set_raw(GAME_HWND hwnd, wm_menu menu) {
     wndproc_ensure(hwnd);

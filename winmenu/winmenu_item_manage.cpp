@@ -21,7 +21,7 @@ dllg bool winmenu_add_submenu(wm_menu menu, wm_command command, wm_menu submenu,
     inf.dwTypeData = (wchar_t*)wm_cc(text);
     return InsertMenuItemW(menu, GetMenuItemCount(menu), true, &inf);
 }
-dllg bool winmenu_add_separator(wm_menu menu, wm_command command, wm_flags flags = 0) {
+dllg bool winmenu_add_separator(wm_menu menu, wm_command command = 0, wm_flags flags = 0) {
     MENUITEMINFOW inf{};
     inf.cbSize = sizeof(inf);
     inf.fMask = MIIM_STATE | MIIM_FTYPE | MIIM_ID;
@@ -50,7 +50,7 @@ dllg bool winmenu_insert_submenu(wm_menu menu, wm_item item, bool bypos, wm_comm
     inf.dwTypeData = (wchar_t*)wm_cc(text);
     return InsertMenuItemW(menu, item, bypos, &inf);
 }
-dllg bool winmenu_insert_separator(wm_menu menu, wm_item item, bool bypos, wm_command command, wm_flags flags = 0) {
+dllg bool winmenu_insert_separator(wm_menu menu, wm_item item, bool bypos, wm_command command = 0, wm_flags flags = 0) {
     MENUITEMINFOW inf{};
     inf.cbSize = sizeof(inf);
     inf.fMask = MIIM_STATE | MIIM_FTYPE | MIIM_ID;

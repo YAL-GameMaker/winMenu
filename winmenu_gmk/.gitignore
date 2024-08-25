@@ -1,0 +1,6 @@
+winmenu_core.gml
+winmenu_autogen.gml
+winmenu.gml
+winmenu.cpp
+*.dll
+*.html

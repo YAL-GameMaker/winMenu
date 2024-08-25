@@ -774,6 +774,42 @@
           </args>
         </function>
         <function>
+          <name>winmenu_cleanup_for_raw_raw</name>
+          <externalName>winmenu_cleanup_for_raw_raw</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>2</returnType>
+          <argCount>2</argCount>
+          <args>
+            <arg>1</arg>
+            <arg>2</arg>
+          </args>
+        </function>
+        <function>
+          <name>winmenu_queue_hwnd_raw</name>
+          <externalName>winmenu_queue_hwnd_raw</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>2</returnType>
+          <argCount>2</argCount>
+          <args>
+            <arg>1</arg>
+            <arg>2</arg>
+          </args>
+        </function>
+        <function>
+          <name>winmenu_bar_get_raw_raw</name>
+          <externalName>winmenu_bar_get_raw_raw</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>2</returnType>
+          <argCount>2</argCount>
+          <args>
+            <arg>1</arg>
+            <arg>2</arg>
+          </args>
+        </function>
+        <function>
           <name>winmenu_bar_set_raw_raw</name>
           <externalName>winmenu_bar_set_raw_raw</externalName>
           <kind>11</kind>
@@ -848,6 +884,18 @@
         <function>
           <name>winmenu_sysmenu_get_info_raw</name>
           <externalName>winmenu_sysmenu_get_info_raw</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>2</returnType>
+          <argCount>2</argCount>
+          <args>
+            <arg>1</arg>
+            <arg>2</arg>
+          </args>
+        </function>
+        <function>
+          <name>winmenu_preinit_raw</name>
+          <externalName>winmenu_preinit_raw</externalName>
           <kind>11</kind>
           <help></help>
           <returnType>2</returnType>
@@ -1080,6 +1128,37 @@
           <externalName>winmenu_preinit</externalName>
           <kind>11</kind>
           <help></help>
+          <returnType>2</returnType>
+          <argCount>0</argCount>
+          <args/>
+        </function>
+        <function>
+          <name>winmenu_cleanup_for</name>
+          <externalName>winmenu_cleanup_for</externalName>
+          <kind>2</kind>
+          <help>winmenu_cleanup_for(hwnd)</help>
+          <returnType>2</returnType>
+          <argCount>1</argCount>
+          <args>
+            <arg>2</arg>
+          </args>
+        </function>
+        <function>
+          <name>winmenu_set_target</name>
+          <externalName>winmenu_set_target</externalName>
+          <kind>2</kind>
+          <help>winmenu_set_target(new_window_handle)</help>
+          <returnType>2</returnType>
+          <argCount>1</argCount>
+          <args>
+            <arg>2</arg>
+          </args>
+        </function>
+        <function>
+          <name>winmenu_reset_target</name>
+          <externalName>winmenu_reset_target</externalName>
+          <kind>2</kind>
+          <help>winmenu_reset_target()</help>
           <returnType>2</returnType>
           <argCount>0</argCount>
           <args/>
@@ -1696,7 +1775,7 @@
           <name>winmenu_add_separator</name>
           <externalName>winmenu_add_separator</externalName>
           <kind>2</kind>
-          <help>winmenu_add_separator(menu, command:int, flags:int = 0)-&gt;bool</help>
+          <help>winmenu_add_separator(menu, command:int = 0, flags:int = 0)-&gt;bool</help>
           <returnType>2</returnType>
           <argCount>-1</argCount>
           <args/>
@@ -1723,7 +1802,7 @@
           <name>winmenu_insert_separator</name>
           <externalName>winmenu_insert_separator</externalName>
           <kind>2</kind>
-          <help>winmenu_insert_separator(menu, item:int, bypos:bool, command:int, flags:int = 0)-&gt;bool</help>
+          <help>winmenu_insert_separator(menu, item:int, bypos:bool, command:int = 0, flags:int = 0)-&gt;bool</help>
           <returnType>2</returnType>
           <argCount>-1</argCount>
           <args/>
@@ -1904,33 +1983,48 @@
           <name>winmenu_show_popup</name>
           <externalName>winmenu_show_popup</externalName>
           <kind>2</kind>
-          <help>winmenu_show_popup(menu, flags:int, x:int, y:int)-&gt;int</help>
+          <help>winmenu_show_popup(menu, flags:int = 0, ?x:int?, ?y:int?)-&gt;int</help>
           <returnType>2</returnType>
-          <argCount>4</argCount>
-          <args>
-            <arg>2</arg>
-            <arg>2</arg>
-            <arg>2</arg>
-            <arg>2</arg>
-          </args>
+          <argCount>-1</argCount>
+          <args/>
         </function>
         <function>
           <name>winmenu_show_popup_outside</name>
           <externalName>winmenu_show_popup_outside</externalName>
           <kind>2</kind>
-          <help>winmenu_show_popup_outside(menu, flags:int, x:int, y:int, exclude_x:int, exclude_y:int, exclude_width:int, exclude_height:int)-&gt;int</help>
+          <help>winmenu_show_popup_outside(menu, exclude_x:int, exclude_y:int, exclude_width:int, exclude_height:int, flags:int = 0, ?x:int?, ?y:int?)-&gt;int</help>
           <returnType>2</returnType>
-          <argCount>8</argCount>
+          <argCount>-1</argCount>
+          <args/>
+        </function>
+        <function>
+          <name>winmenu_cleanup_for_raw</name>
+          <externalName>winmenu_cleanup_for_raw</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>2</returnType>
+          <argCount>1</argCount>
           <args>
             <arg>2</arg>
-            <arg>2</arg>
-            <arg>2</arg>
-            <arg>2</arg>
-            <arg>2</arg>
-            <arg>2</arg>
-            <arg>2</arg>
-            <arg>2</arg>
           </args>
+        </function>
+        <function>
+          <name>winmenu_queue_hwnd</name>
+          <externalName>winmenu_queue_hwnd</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>2</returnType>
+          <argCount>0</argCount>
+          <args/>
+        </function>
+        <function>
+          <name>winmenu_bar_get_raw</name>
+          <externalName>winmenu_bar_get_raw</externalName>
+          <kind>11</kind>
+          <help></help>
+          <returnType>2</returnType>
+          <argCount>0</argCount>
+          <args/>
         </function>
         <function>
           <name>winmenu_bar_set_raw</name>

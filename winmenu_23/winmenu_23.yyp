@@ -1,11 +1,15 @@
 {
   "resources": [
+    {"id":{"name":"spr_rgb","path":"sprites/spr_rgb/spr_rgb.yy",},"order":1,},
     {"id":{"name":"trace","path":"scripts/trace/trace.yy",},"order":1,},
     {"id":{"name":"winmenu_extras","path":"scripts/winmenu_extras/winmenu_extras.yy",},"order":1,},
+    {"id":{"name":"obj_test_popup","path":"objects/obj_test_popup/obj_test_popup.yy",},"order":3,},
     {"id":{"name":"fnt_test","path":"fonts/fnt_test/fnt_test.yy",},"order":1,},
     {"id":{"name":"obj_test","path":"objects/obj_test/obj_test.yy",},"order":1,},
+    {"id":{"name":"obj_test_sysmenu","path":"objects/obj_test_sysmenu/obj_test_sysmenu.yy",},"order":2,},
     {"id":{"name":"rm_test","path":"rooms/rm_test/rm_test.yy",},"order":1,},
     {"id":{"name":"spr_thumb_up","path":"sprites/spr_thumb_up/spr_thumb_up.yy",},"order":0,},
+    {"id":{"name":"obj_test_bar","path":"objects/obj_test_bar/obj_test_bar.yy",},"order":1,},
     {"id":{"name":"winmenu","path":"extensions/winmenu/winmenu.yy",},"order":1,},
   ],
   "Options": [

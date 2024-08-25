@@ -22,11 +22,18 @@ cd ..
 
 if not exist "winmenu-for-GMS2.3+\extensions" mkdir "winmenu-for-GMS2.3+\extensions"
 if not exist "winmenu-for-GMS2.3+\datafiles" mkdir "winmenu-for-GMS2.3+\datafiles"
+if not exist "winmenu-for-GMS2.3+\scripts\winmenu_extras" mkdir "winmenu-for-GMS2.3+\scripts\winmenu_extras"
 cmd /C copyre ..\winmenu_23\extensions\winmenu winmenu-for-GMS2.3+\extensions\winmenu
+cmd /C copyre ..\winmenu_23\scripts\winmenu_extras winmenu-for-GMS2.3+\scripts\winmenu_extras
 cmd /C copyre ..\winmenu_23\datafiles\winmenu.html winmenu-for-GMS2.3+\datafiles\winmenu.html
 cd winmenu-for-GMS2.3+
 cmd /C 7z a winmenu-for-GMS2.3+.zip *
 move /Y winmenu-for-GMS2.3+.zip ../winmenu-for-GMS2.3+.yymps
 cd ..
+
+del /Q winmenu-for-GM8.1.zip
+cd ..\winmenu_gmk
+cmd /C 7z a ..\export\winmenu-for-GM8.1.zip winmenu.const.txt winmenu.dll winmenu.gml winmenu.html
+cd ..\export
 
 pause

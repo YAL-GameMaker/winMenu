@@ -1,4 +1,7 @@
 {
+    "builderSettings": {
+        "runtimeVersion": "runtime-2022.0.2.49"
+    },
     "linterPrefs": {
         
     },

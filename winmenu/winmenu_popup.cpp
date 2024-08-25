@@ -19,7 +19,19 @@ enum class wmpf {
     anim_to_top = 0x2000,
     anim_none = 0x4000,
 };
-dllg wm_item winmenu_show_popup(wm_menu menu, uint32_t flags, int x, int y, GAME_HWND hwnd) {
+POINT wmGetCursorPosOpt(std::optional<int>& x, std::optional<int>& y) {
+    POINT mp{};
+    if (x && y) {
+        mp.x = *x;
+        mp.y = *y;
+    } else {
+        GetCursorPos(&mp);
+        if (x) mp.x = *x;
+        if (y) mp.y = *y;
+    }
+    return mp;
+}
+dllg wm_item winmenu_show_popup(GAME_HWND hwnd, wm_menu menu, uint32_t flags = 0, std::optional<int> x = {}, std::optional<int> y = {}) {
     #define X(name, val) static_assert((uint32_t)name == (val), #name)
     X(wmpf::can_right_click, TPM_RIGHTBUTTON);
     //
@@ -38,9 +50,10 @@ dllg wm_item winmenu_show_popup(wm_menu menu, uint32_t flags, int x, int y, GAME
     X(wmpf::anim_to_top, TPM_VERNEGANIMATION);
     #undef X
     flags |= TPM_RETURNCMD | TPM_NONOTIFY;
-    return TrackPopupMenuEx(menu, flags, x, y, hwnd, nullptr);
+    auto mp = wmGetCursorPosOpt(x, y);
+    return TrackPopupMenuEx(menu, flags, mp.x, mp.y, hwnd, nullptr);
 }
-dllg wm_item winmenu_show_popup_outside(wm_menu menu, uint32_t flags, int x, int y, GAME_HWND hwnd, int exclude_x, int exclude_y, int exclude_width, int exclude_height) {
+dllg wm_item winmenu_show_popup_outside(GAME_HWND hwnd, wm_menu menu, int exclude_x, int exclude_y, int exclude_width, int exclude_height, uint32_t flags = 0, std::optional<int> x = {}, std::optional<int> y = {}) {
     flags |= TPM_RETURNCMD | TPM_NONOTIFY;
     TPMPARAMS tpmp{};
     tpmp.cbSize = sizeof(tpmp);
@@ -48,5 +61,6 @@ dllg wm_item winmenu_show_popup_outside(wm_menu menu, uint32_t flags, int x, int
     tpmp.rcExclude.top = exclude_y;
     tpmp.rcExclude.right = exclude_x + exclude_width - 1;
     tpmp.rcExclude.bottom = exclude_y + exclude_height - 1;
-    return TrackPopupMenuEx(menu, flags, x, y, hwnd, &tpmp);
+    auto mp = wmGetCursorPosOpt(x, y);
+    return TrackPopupMenuEx(menu, flags, mp.x, mp.y, hwnd, &tpmp);
 }

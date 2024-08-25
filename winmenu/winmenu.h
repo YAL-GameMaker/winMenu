@@ -22,3 +22,5 @@ inline void wmii_set_flags(MENUITEMINFOW& inf, wm_flags flags) {
 inline wm_flags wmii_get_flags(MENUITEMINFOW& inf) {
 	return (inf.fType & wmf_mft) | (inf.fState & ~wmf_mft);
 }
+
+#define wm_hook_adj

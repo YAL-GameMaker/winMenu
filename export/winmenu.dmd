@@ -201,7 +201,8 @@ Flags are explained in [winmenu_add].
 		The menu should be created with [winmenu_create_bar].
 		
 		Note that this eats into the game area and you may want to account
-		for the added window height (using [winmenu_bar_get_height]).
+		for the added window height (using [winmenu_bar_get_height])
+		at various window-sizing/measuring occasions.
 	}
 	#[winmenu_bar_get()->]() {
 		Returns the current bar-menu (if any).
@@ -300,13 +301,15 @@ Flags are explained in [winmenu_add].
 	}
 }
 #[Popup menus](winmenu_popup) {
-	#[winmenu_show_popup(menu, flags, x, y)->]() {
+	#[winmenu_show_popup(menu, flags = 0, ?x, ?y)->]() {
 		Shows a popup menu at the specified (screen-space) location.
+		
+		If location is not specified, shows at current mouse location.
 		
 		Returns the command for the chosen menu item,
 		or 0 if the user cancels the menu or an error occurs.
 		
-		`flags` can be one or more of the following: --{
+		`flags` can be zero or more of the following (bit flags): --{
 		-	General: --{
 			-	`wmpf_can_right_click`\
 				Items can also be chosen with the right mouse button.
@@ -333,7 +336,7 @@ Flags are explained in [winmenu_add].
 		
 		$[msdn](TrackPopupMenuEx)
 	}
-	#[winmenu_show_popup_outside(menu, flags, x, y, exclude_x, exclude_y, exclude_width, exclude_height)->]() {
+	#[winmenu_show_popup_outside(menu, exclude_x, exclude_y, exclude_width, exclude_height, flags = 0, ?x, ?y)->]() {
 		Like above, but avoids overlapping the specified rectangle
 		(e.g. the subject of a context menu).
 	}
@@ -349,7 +352,11 @@ Flags are explained in [winmenu_add].
 		that is then used for telling what item was interacted with,
 		or accessing/modifying items.
 		
-		`text` is an item label.
+		`text` is an item label.\
+		You can use `&` to mark a letter for keyboard navigation (e.g. `"&File"`);\
+		You can display a keyboard shortcut for the menu item by separating it using
+		`"\t"` (GMS2 and GM2022+) or `chr(vk_tab)` (any version), such as
+		`"New" + chr(vk_tab) + "Ctrl+N"`.
 		
 		`flags` can be one or a sum of the following: --{
 		-	`wmf_disabled`\
@@ -775,4 +782,37 @@ Flags are explained in [winmenu_add].
 	#[winmenu_get_checkmark_height()->]() {
 		Same as above, but for height.
 	}
+}
+#[Multi-window handling](winmenu_multi) {
+	If your application consists of multiple windows
+	(using my "Windows' windows" extension or libMulti),
+	these functions let you apply the extension's functions to a different window.
+	
+	In Windows' windows, you can get a handle of a window using `winwin_get_handle`.
+	
+	libMulti doesn't have a way to get a window handle at the time of writing.
+	
+	#[winmenu_set_target(window_handle)]() {
+		Changes the target window to the specified handle.
+	}
+	#[winmenu_reset_target()]() {
+		Changes the target window back to the main game window (`window_handle()`).
+	}
+	#[winmenu_cleanup_for(window_handle)]() {
+		The extension caches a little information for windows it work with.
+		
+		If you are creating and destroying windows often,
+		you might want to call this function when destroying a window
+		so that cached information is removed.
+		
+		You don't have to call this for the main game window.
+	}
+	For example,
+	```gml
+	winmenu_set_target(winwin_get_handle(extra_window));
+	var m_bar = winmenu_create_bar();
+	winmenu_add(m_bar, 1, "Hello!");
+	winmenu_bar_set(m);
+	winmenu_reset_target();
+	```
 }

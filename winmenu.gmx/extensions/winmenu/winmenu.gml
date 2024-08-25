@@ -4,14 +4,31 @@
 //#global winmenu_system_handler
 winmenu_bar_handler = -1;
 winmenu_system_handler = -1;
+global.__winmenu_target = window_handle();
+global.__winmenu_orig_target = window_handle();
+global.__winmenu_bar_menus = ds_map_create();
+global.__winmenu_sys_menus = ds_map_create();
 // GMS >= 1:
 global.__ptrt_HMENU = ["HMENU"];
-global.__winmenu_bar = undefined;
-global.__winmenu_sysmenu = undefined;
+winmenu_preinit_raw(window_handle(), 0);
 /*/
-global.__winmenu_bar = -1;
-global.__winmenu_sysmenu = -1;
+winmenu_preinit_raw("", window_handle());
 //*/
+
+#define winmenu_cleanup_for
+/// (hwnd)
+var _hwnd = argument0;
+ds_map_delete(global.__winmenu_bar_menus, _hwnd);
+ds_map_delete(global.__winmenu_sys_menus, _hwnd);
+winmenu_cleanup_for_raw(_hwnd);
+
+#define winmenu_set_target
+/// (new_window_handle)
+global.__winmenu_target = argument0;
+
+#define winmenu_reset_target
+/// ()
+global.__winmenu_target = global.__winmenu_orig_target;
 
 #define winmenu_update
 /// ()
@@ -28,13 +45,14 @@ for (_step = 0; _step < 2; _step += 1) {
     //*/
     repeat (winmenu_queue_size(_step)) {
         var _cmd = winmenu_queue_pop(_step);
+        var _hwnd = winmenu_queue_hwnd();
         /* GMS >= 2.3:
         if (_is_method) {
-            _handler(_cmd);
+            _handler(_cmd, _hwnd);
         } else // ->
         //*/
         if (_has_handler) {
-            script_execute(_handler, _cmd);
+            script_execute(_handler, _cmd, _hwnd);
         } else {
             var _cmd_str = string(_cmd);
             // GMS >= 1:
@@ -92,37 +110,71 @@ return _buf;
 
 #define winmenu_bar_get
 /// ()->
-return global.__winmenu_bar;
+// GMS >= 1:
+var _menu = global.__winmenu_bar_menus[?global.__winmenu_target];
+if (_menu == undefined) {
+    _menu = winmenu_bar_get_raw();
+    global.__winmenu_bar_menus[?global.__winmenu_target] = _menu;
+}
+return _menu;
+/*/
+if (ds_map_exists(global.__winmenu_bar_menus, global.__winmenu_target)) {
+    return ds_map_find_value(global.__winmenu_bar_menus, global.__winmenu_target);
+} else {
+    var _bar; _bar = winmenu_bar_get_raw();
+    if (_bar != -1) ds_map_add(global.__winmenu_bar_menus, global.__winmenu_target, _bar);
+    return _bar;
+}
+//*/
 
 #define winmenu_bar_set
 /// (menu)
 var _menu = argument0;
-global.__winmenu_bar = _menu;
+// GMS >= 1:
+global.__winmenu_bar_menus[?global.__winmenu_target] = _menu;
+/*/
+if (ds_map_exists(global.__winmenu_bar_menus, global.__winmenu_target)) {
+    ds_map_replace(global.__winmenu_bar_menus, global.__winmenu_target, _menu);
+} else {
+    ds_map_add(global.__winmenu_bar_menus, global.__winmenu_target, _menu);
+}
+//*/
 winmenu_bar_set_raw(_menu);
 
 #define winmenu_bar_reset
 /// ()
 var _menu = argument0;
-// GMS >= 1:
-global.__winmenu_bar = undefined;
-/*/
-global.__winmenu_bar = -1;
-//*/
+ds_map_delete(global.__winmenu_bar_menus, global.__winmenu_target);
 winmenu_bar_reset_raw();
 
 #define winmenu_sysmenu_get
 /// (?revert)->
-var _revert;
+var _revert, _menu;
 if (argument_count > 0) _revert = argument[0]; else _revert = false;
 if (!_revert) {
     // GMS >= 1:
-    if (global.__winmenu_sysmenu != undefined) return global.__winmenu_sysmenu;
+    _menu = global.__winmenu_sys_menus[?global.__winmenu_target];
+    if (_menu != undefined) return _menu;
     /*/
-    if (global.__winmenu_sysmenu != -1) return global.__winmenu_sysmenu;
+    if (ds_map_exists(global.__winmenu_sys_menus, global.__winmenu_target)) {
+        return ds_map_find_value(global.__winmenu_sys_menus, global.__winmenu_target);
+    }
     //*/
 }
-global.__winmenu_sysmenu = winmenu_sysmenu_get_raw(_revert);
-return global.__winmenu_sysmenu;
+_menu = winmenu_sysmenu_get_raw(_revert);
+// GMS >= 1:
+global.__winmenu_sys_menus[?global.__winmenu_target] = _menu;
+/*/
+if (ds_map_exists(global.__winmenu_sys_menus, global.__winmenu_target)) {
+    winmenu_deref(ds_map_find_value(global.__winmenu_sys_menus, global.__winmenu_target));
+    if (_menu != -1) {
+        ds_map_replace(global.__winmenu_sys_menus, global.__winmenu_target, _menu);
+    } else {
+        ds_map_delete(global.__winmenu_sys_menus, global.__winmenu_target);
+    }
+}
+//*/
+return _menu;
 
 #define winmenu_bitmap_create_from_surface
 /// (surf)
@@ -150,9 +202,9 @@ var _height = sprite_get_height(_sprite);
 var _surf = surface_create(_width, _height);
 surface_set_target(_surf);
 draw_clear_alpha(0, 0);
-gpu_set_blendmode(bm_add);
+draw_set_blend_mode(bm_add);
 draw_sprite(_sprite, _subimg, sprite_get_xoffset(_sprite), sprite_get_yoffset(_sprite));
-gpu_set_blendmode(bm_normal);
+draw_set_blend_mode(bm_normal);
 surface_reset_target();
 var _result = winmenu_bitmap_create_from_surface(_surf);
 surface_free(_surf);
