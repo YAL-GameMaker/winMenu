@@ -3,7 +3,11 @@
 **Quick links:** [documentation](https://yal.cc/docs/gm/winmenu/)
 · [itch.io](https://yellowafterlife.itch.io/gamemaker-winwin)  
 **Platforms:** Windows, Windows (YYC)​  
-**Versions:** GameMaker 8.1, GM:Studio 1.4+, GMS 2.2+, GM2022/LTS
+**Versions:** GameMaker 8.1, GM:Studio 1.4+, GMS 2.2+, GM2022+, GM LTS
+
+| [![](export/media/itch-1.png)](export/media/itch-1.png) | [![](export/media/itch-2.png)](export/media/itch-2.png) |
+| :-: | :-: |
+| [![](export/media/itch-3.png)](export/media/itch-3.png) | [![](export/media/itch-4.png)](export/media/itch-4.png) |
 
 winMenu is an extension for using menus in GameMaker games! That includes:
 
