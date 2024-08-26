@@ -1,7 +1,7 @@
 # winMenu
 
 **Quick links:** [documentation](https://yal.cc/docs/gm/winmenu/)
-· [itch.io](https://yellowafterlife.itch.io/gamemaker-winwin)  
+· [itch.io](https://yellowafterlife.itch.io/gamemaker-winmenu)  
 **Platforms:** Windows, Windows (YYC)​  
 **Versions:** GameMaker 8.1, GM:Studio 1.4+, GMS 2.2+, GM2022+, GM LTS
 
