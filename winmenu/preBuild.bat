@@ -20,7 +20,6 @@ if %ERRORLEVEL% EQU 0 (
 	--include "winmenu.h"^
 	--index "%projectDir%winmenu.h"^
 	--struct auto^
-	--window-handle global.__winmenu_target^
 	%projectDir%winmenu.cpp^
 	%projectDir%winmenu_*.cpp
 )
